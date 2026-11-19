@@ -68,6 +68,11 @@
       <div class="center">
         <div class="viewer" id="viewer">
           <div class="v-title" id="vTitle"></div>
+          <div class="fs-fab" id="fsFab" hidden>
+            <button type="button" class="fs-clear-fab" id="fsClearFab" data-clear-flt="1" hidden></button>
+            <button type="button" class="fs-dots" id="fsDots" aria-label="Danh sách thiết bị"></button>
+          </div>
+          <div class="fs-drawer" id="fsDrawer" hidden></div>
           <button type="button" class="arrow prev" id="aPrev"><svg viewBox="0 0 24 24"><path d="M15 4 7 12l8 8"/></svg></button>
           <button type="button" class="arrow next" id="aNext"><svg viewBox="0 0 24 24"><path d="m9 4 8 8-8 8"/></svg></button>
         </div>
@@ -88,6 +93,8 @@
       </div>
     </section>
   </main>
+
+  <div class="kb-modal" id="kbModal" hidden role="dialog" aria-modal="true"></div>
 
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>

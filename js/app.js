@@ -25,6 +25,7 @@
     tap: '<path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V11"/><path d="M12 10.5V9a1.5 1.5 0 0 1 3 0v2M15 10.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-1a6 6 0 0 1-5-2.7L4 15.5a1.5 1.5 0 0 1 2.5-1.7L9 16"/>',
     dl: '<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',
     fit: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
+    unfit: '<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>',
     left: '<path d="M15 5l-7 7 7 7"/>',
     right: '<path d="M9 5l7 7-7 7"/>'
   };
@@ -56,8 +57,12 @@
       has_demo: "Có dự án mẫu", soon: "Sắp có",
       demo: "Dự án mẫu", get_docs: "Xem tài liệu →",
       hint: "Bấm vào thiết bị trên bản vẽ để xem chi tiết.", on_page: "Thiết bị trên trang này", pages_h: "Các trang",
-      dl_pdf: "Tải PDF", close: "Đóng", clear_flt: "Bỏ lọc", prev: "Trước", next: "Sau", zoom_in: "Phóng to", zoom_out: "Thu nhỏ", fit: "Vừa khung",
-      keys: "Chức năng phím", panel: "Thiết bị trong tủ", page: "Trang", pages: "trang",
+      dl_pdf: "Tải PDF", close: "Đóng", clear_flt: "Bỏ lọc", prev: "Trước", next: "Sau", zoom_in: "Phóng to", zoom_out: "Thu nhỏ", fit: "Full screen", exit_fs: "Thoát",
+      keys: "Chức năng phím", keys_tip: "Bấm vào từng phím để xem kịch bản chi tiết", panel: "Thiết bị trong tủ", page: "Trang", pages: "trang",
+      kb_key: "Phím", kb_press: "Nhấn ngắn", kb_hold: "Nhấn giữ", kb_scene_h: "Trạng thái thiết bị khi gọi cảnh",
+      kb_trig: "Điều kiện kích hoạt", kb_note: "Ghi chú vận hành", kb_devs: "Thiết bị liên quan trên mặt bằng",
+      kb_open_doc: "Xem kịch bản gốc (Trang {p})", kb_back_sum: "← Quay lại tóm tắt phím", kb_doc_title: "Kịch bản vận hành · Trang {p} / {n}", kb_prev: "‹ Phím trước", kb_next: "Phím sau ›",
+      kb_t_scene: "Gọi cảnh", kb_t_light: "Đèn DALI", kb_t_curtain: "Rèm điện", kb_t_relay: "Bật / tắt",
       empty_h: "Dự án mẫu {c} đang được cập nhật", empty_p: "Các giải pháp tiêu biểu cho {c}:", empty_btn: "Xem dự án mẫu Văn phòng",
       dl_eyebrow: "Hồ sơ kỹ thuật", dl_title: "Tài liệu", dl_desc: "Bản PDF đầy đủ của từng dự án mẫu, in được khổ A3 / A4.", dl_soon: "Đang chuẩn bị:"
     },
@@ -69,8 +74,12 @@
       has_demo: "Showcase", soon: "Coming soon",
       demo: "Showcase project", get_docs: "View documents →",
       hint: "Click a device on the drawing to see its details.", on_page: "Devices on this page", pages_h: "Pages",
-      dl_pdf: "Download PDF", close: "Close", clear_flt: "Clear", prev: "Prev", next: "Next", zoom_in: "Zoom in", zoom_out: "Zoom out", fit: "Fit",
-      keys: "Key functions", panel: "Inside the cabinet", page: "Page", pages: "pages",
+      dl_pdf: "Download PDF", close: "Close", clear_flt: "Clear", prev: "Prev", next: "Next", zoom_in: "Zoom in", zoom_out: "Zoom out", fit: "Full screen", exit_fs: "Exit",
+      keys: "Key functions", keys_tip: "Click any key to view its operation scenario", panel: "Inside the cabinet", page: "Page", pages: "pages",
+      kb_key: "Key", kb_press: "Short press", kb_hold: "Long press", kb_scene_h: "Device states in this scene",
+      kb_trig: "Trigger conditions", kb_note: "Operation note", kb_devs: "Affected devices on plan",
+      kb_open_doc: "View scenario sheet (Page {p})", kb_back_sum: "← Back to key summary", kb_doc_title: "Operation scenarios · Page {p} / {n}", kb_prev: "‹ Prev key", kb_next: "Next key ›",
+      kb_t_scene: "Scene", kb_t_light: "DALI Dimming", kb_t_curtain: "Curtain", kb_t_relay: "On / Off",
       empty_h: "{c} showcase coming soon", empty_p: "Typical solutions for {c}:", empty_btn: "View the office showcase",
       dl_eyebrow: "Technical documents", dl_title: "Documents", dl_desc: "Full PDF set for each showcase project, printable on A3 / A4.", dl_soon: "In preparation:"
     }
@@ -165,12 +174,12 @@
     z.addEventListener("click", function (e) {
       var b = e.target.closest("button[data-z]"); if (!b) return;
       var r = host.getBoundingClientRect();
-      if (b.dataset.z === "fit") self.fit(); else self.zoomAt(r.width / 2, r.height / 2, b.dataset.z === "in" ? 1.5 : 1 / 1.5);
+      if (b.dataset.z === "fit") toggleFullscreen(); else self.zoomAt(r.width / 2, r.height / 2, b.dataset.z === "in" ? 1.5 : 1 / 1.5);
     });
     this.s = 1; this.x = 0; this.y = 0; this.W = 1; this.H = 1;
     var ptr = {}, start = null, moved = false, downHs = null;
     host.addEventListener("pointerdown", function (e) {
-      if (e.target.closest("button, a")) return;
+      if (e.target.closest("button, a, .fs-drawer")) return;
       if (e.button !== 0 && e.pointerType === "mouse") return;
       e.preventDefault();
       ptr[e.pointerId] = { x: e.clientX, y: e.clientY };
@@ -208,6 +217,7 @@
     host.addEventListener("pointerup", up);
     host.addEventListener("pointercancel", up);
     host.addEventListener("wheel", function (e) {
+      if (e.target.closest(".fs-drawer")) return;
       e.preventDefault();
       var r = host.getBoundingClientRect();
       self.zoomAt(e.clientX - r.left, e.clientY - r.top, Math.exp(-e.deltaY * 0.0016));
@@ -242,7 +252,8 @@
     var ar = this.host.querySelector(".arrow"), mobile = ar && getComputedStyle(ar).backgroundColor !== "rgba(0, 0, 0, 0)";
     var side = ar && !mobile ? ar.offsetWidth + 28 : 8;
     var top = this.host.querySelector(".v-title").offsetHeight ? (mobile ? 46 : 62) : 8;
-    return { x: side, w: Math.max(120, r.width - side * 2), h: Math.max(120, h - top - 10), top: top };
+    var pg = $(".pager"), bot = (pg && pg.offsetHeight) ? pg.offsetHeight + 22 : 12;
+    return { x: side, w: Math.max(120, r.width - side * 2), h: Math.max(120, h - top - bot), top: top };
   };
   Viewer.prototype.fitScale = function () { var v = this.view(); return Math.min(v.w / this.W, v.h / this.H); };
   Viewer.prototype.clamp = function (s) { var f = this.fitScale(); return Math.max(f * 0.6, Math.min(s, Math.max(f * 8, 4))); };
@@ -333,6 +344,11 @@
     if (code && st.muc === "mat-bang") {
       var k = pages[i].devices.findIndex(function (d) { return d.ma === code || d.ma.split(" + ").indexOf(code) >= 0; });
       if (k >= 0 && k !== st.sel) select(k, true);
+      var qKey = parseInt(new URLSearchParams(location.search).get("key") || "0", 10);
+      if (qKey >= 1 && k >= 0) {
+        var swIt = pages[i].devices[k].items.filter(function (it) { return it.kind === "SW"; })[0];
+        if (swIt && swIt.buttons && qKey <= swIt.buttons.length) openKeyModal(swIt.code, qKey - 1);
+      }
     }
   }
   function loadPage(i) {
@@ -397,10 +413,77 @@
     var a = $(".zoom .pdf");
     if (f) { a.href = f.file; a.innerHTML = ic("dl") + "<span>" + esc(t("dl_pdf")) + "</span>"; }
     a.hidden = !f;
-    var fw = $(".zoom .wide");
-    fw.innerHTML = ic("fit") + "<span>" + esc(t("fit")) + "</span>";
-    fw.title = t("fit");
+    updateFsBtn();
   }
+  function updateFsBtn() {
+    var fw = $(".zoom .wide");
+    if (!fw) return;
+    var on = document.body.classList.contains("is-fs");
+    var lbl = on ? t("exit_fs") : t("fit");
+    fw.innerHTML = ic(on ? "unfit" : "fit") + "<span>" + esc(lbl) + "</span>";
+    fw.title = lbl;
+    fw.classList.toggle("on", on);
+  }
+  var DOTS_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="5" r="2.2"/><circle cx="12" cy="5" r="2.2"/><circle cx="19" cy="5" r="2.2"/><circle cx="5" cy="12" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="19" cy="12" r="2.2"/><circle cx="5" cy="19" r="2.2"/><circle cx="12" cy="19" r="2.2"/><circle cx="19" cy="19" r="2.2"/></svg>';
+  var fsDrawerOpen = false;
+  function updateFsDrawer() {
+    var fab = $("#fsFab"), clr = $("#fsClearFab"), btn = $("#fsDots"), drw = $("#fsDrawer");
+    if (!fab || !btn || !drw) return;
+    var showBtn = document.body.classList.contains("is-fs") && st.muc === "mat-bang" && CAT_BY[st.cat] && !!CAT_BY[st.cat].data;
+    fab.hidden = !showBtn;
+    if (!showBtn) { fsDrawerOpen = false; drw.hidden = true; btn.classList.remove("on"); return; }
+    var any = Object.keys(st.kinds).length > 0;
+    if (clr) {
+      clr.hidden = !any;
+      clr.textContent = "× " + t("clear_flt");
+    }
+    btn.classList.toggle("on", fsDrawerOpen);
+    btn.innerHTML = fsDrawerOpen ? '<span style="font-size:22px;font-weight:700;line-height:1">×</span>' : DOTS_SVG;
+    btn.title = (!fsDrawerOpen && any) ? t("clear_flt") : t("on_page");
+    drw.hidden = !fsDrawerOpen;
+    if (!fsDrawerOpen) return;
+    var p = pagesOf("mat-bang")[cur()], cnt = {};
+    p.devices.forEach(function (d) { d.items.forEach(function (it) { cnt[it.kind] = (cnt[it.kind] || 0) + 1; }); });
+    if (st.sel >= 0) {
+      drw.innerHTML = detailHtml(p.devices[st.sel]);
+    } else {
+      drw.innerHTML =
+        '<div class="fs-drawer-hd"><h3 class="side-h">' + esc(t("on_page")) + '</h3></div><div class="kinds">' +
+        Object.keys(D.loai).filter(function (k) { return cnt[k]; }).map(function (k) {
+          return '<button type="button" class="kind' + (st.kinds[k] ? " on" : "") + '" data-k="' + k + '" style="--cb:' + barColorOfKind(k) + '"><span class="pi">' +
+            (KIND_IMG[k] ? '<img src="' + KIND_IMG[k] + '" alt="">' : "") +
+            "</span><b>" + esc(N(D.loai[k])) + "</b><em>" + cnt[k] + "</em></button>";
+        }).join("") + "</div>";
+    }
+  }
+  function setFsMode(on) {
+    document.body.classList.toggle("is-fs", on);
+    if (!on) fsDrawerOpen = false;
+    updateFsBtn();
+    updateFsDrawer();
+    requestAnimationFrame(function () { if (viewer) viewer.fit(); });
+  }
+  function toggleFullscreen() {
+    var want = !document.body.classList.contains("is-fs");
+    if (want) {
+      setFsMode(true);
+      var elFs = document.documentElement;
+      try {
+        if (elFs.requestFullscreen) elFs.requestFullscreen().catch(function () {});
+        else if (elFs.webkitRequestFullscreen) elFs.webkitRequestFullscreen();
+      } catch (err) {}
+    } else {
+      setFsMode(false);
+      try {
+        if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(function () {});
+        else if (document.webkitFullscreenElement && document.webkitExitFullscreen) document.webkitExitFullscreen();
+      } catch (err) {}
+    }
+  }
+  document.addEventListener("fullscreenchange", function () {
+    if (!document.fullscreenElement && document.body.classList.contains("is-fs")) setFsMode(false);
+    else if (viewer) requestAnimationFrame(function () { viewer.fit(); });
+  });
   function renderPager() {
     var n = pagesOf(st.muc).length, c = cur(), items = [];
     if (n <= 7) { for (var i = 0; i < n; i++) items.push(i); }
@@ -437,6 +520,7 @@
   function select(k, fromRoute) {
     if (st.sel >= 0) mark(st.sel, "sel", false);
     st.sel = k; mark(k, "sel", true);
+    if (document.body.classList.contains("is-fs")) fsDrawerOpen = true;
     var d = pagesOf("mat-bang")[cur()].devices[k];
     renderPanel();
     var det = $("#detail");
@@ -477,6 +561,7 @@
   /* cột phải */
   function renderPanel() {
     renderMobFilter();
+    updateFsDrawer();
     var det = $("#detail");
     if (st.muc === "mat-bang" && st.sel >= 0) {
       det.classList.remove("idle");
@@ -523,11 +608,196 @@
       if (it.h) h += '<span class="dt-h">' + esc(L(it.h)) + "</span>";
       h += '</div></div><p class="dt-fn">' + esc(lang === "en" ? k.fn_en : k.fn_vi) + "</p>";
       if (it.buttons && it.buttons.length) {
-        h += '<div class="keys">' + it.buttons.map(function (b, n) { return "<div><i>" + (n + 1) + "</i>" + esc(L(b)) + "</div>"; }).join("") + "</div>";
+        h += '<div class="keys">' + it.buttons.map(function (b, n) {
+          return '<button type="button" class="key-btn" data-sw="' + esc(it.code) + '" data-ki="' + n + '"><i>' + (n + 1) +
+            '</i><span class="k-lbl">' + esc(L(b)) + '</span><span class="k-arr">↗</span></button>';
+        }).join("") + '</div><div class="keys-tip">' + esc(t("keys_tip")) + "</div>";
       }
       h += "</div>";
     });
     return h;
+  }
+
+  /* ===== Pop-up kịch bản phím công tắc (ban-mau-9) ===== */
+  var kbState = null; // { sw, ki }
+  function clearKbHits() {
+    if (!viewer) return;
+    viewer.layer.querySelectorAll(".kb-hit").forEach(function (x) { x.classList.remove("kb-hit"); });
+  }
+  function closeKeyModal() {
+    kbState = null;
+    clearKbHits();
+    var m = $("#kbModal");
+    if (m) { m.hidden = true; m.innerHTML = ""; }
+  }
+  function findSwitchItem(swCode) {
+    if (st.muc !== "mat-bang") return null;
+    var p = pagesOf("mat-bang")[cur()];
+    for (var i = 0; i < p.devices.length; i++) {
+      var d = p.devices[i];
+      for (var j = 0; j < d.items.length; j++) {
+        if (d.items[j].code === swCode) return { dev: d, item: d.items[j], page: p };
+      }
+    }
+    return null;
+  }
+  function openKeyModal(swCode, ki) {
+    var f = findSwitchItem(swCode);
+    if (!f || !f.item.buttons || !f.item.buttons[ki]) return;
+    kbState = { sw: swCode, ki: ki };
+    var btns = f.item.buttons, btn = btns[ki], kb = btn.kb || {};
+    var btype = kb.type || "relay";
+    var typeLabel = t("kb_t_" + btype);
+
+    // Tô sáng các thiết bị bị tác động ngay trên mặt bằng
+    clearKbHits();
+    if (kb.devs && kb.devs.length && viewer) {
+      f.page.devices.forEach(function (d, idx) {
+        var codes = d.ma.split(" + ");
+        if (codes.some(function (c) { return kb.devs.indexOf(c) >= 0; })) mark(idx, "kb-hit", true);
+      });
+    }
+
+    var body = '<div class="kb-ops">';
+    if (kb.press) body += '<div class="kb-op"><small>' + esc(t("kb_press")) + "</small><p>" + esc(L(kb.press)) + "</p></div>";
+    if (kb.hold) body += '<div class="kb-op"><small>' + esc(t("kb_hold")) + "</small><p>" + esc(L(kb.hold)) + "</p></div>";
+    body += "</div>";
+
+    if (kb.scene && kb.scene.actions && kb.scene.actions.length) {
+      // Nhóm hành động theo khu vực
+      var order = [], byArea = {};
+      kb.scene.actions.forEach(function (a) {
+        var an = a.area || L(f.dev.area);
+        if (!byArea[an]) { byArea[an] = []; order.push(an); }
+        byArea[an].push(a);
+      });
+      body += '<div><div class="kb-sec-h">' + esc(t("kb_scene_h")) + "</div>" + order.map(function (an) {
+        return '<div class="kb-area-grp"><div class="kb-area-name">' + esc(an) + "</div>" + byArea[an].map(function (a) {
+          var s = a.st, valHtml = "";
+          if (s.kind === "dim") {
+            valHtml = '<span class="kb-bar"><i style="width:' + s.pct + '%"></i></span><span class="kb-pill st-dim">' + esc(L(s)) + "</span>";
+          } else {
+            valHtml = '<span class="kb-pill st-' + esc(s.kind) + '">' + esc(L(s)) + "</span>";
+          }
+          return '<div class="kb-act-row"><span class="kb-act-lbl">' + esc(a.label) + "<small>" + esc(a.col) + '</small></span><span class="kb-act-val">' + valHtml + "</span></div>";
+        }).join("") + "</div>";
+      }).join("") + "</div>";
+      if (kb.scene.trigger) body += '<div class="kb-note"><b>' + esc(t("kb_trig")) + ":</b> " + esc(kb.scene.trigger) + "</div>";
+      if (kb.scene.note) body += '<div class="kb-note"><b>' + esc(t("kb_note")) + ":</b> " + esc(kb.scene.note) + "</div>";
+    } else if (kb.sw_note) {
+      body += '<div class="kb-note"><b>' + esc(t("kb_note")) + ":</b> " + esc(kb.sw_note) + "</div>";
+    }
+
+    if (kb.devs && kb.devs.length) {
+      body += '<div class="kb-devs">' + esc(t("kb_devs")) + ": " + kb.devs.map(function (c) { return "<span>" + esc(c) + "</span>"; }).join("") + "</div>";
+    }
+
+    var kbPage = kb.kb_page || 2;
+    var modal = $("#kbModal");
+    modal.innerHTML =
+      '<div class="kb-box">' +
+        '<div class="kb-hd"><div>' +
+          '<div class="kb-eyebrow"><span class="kb-sw-tag">' + esc(swCode) + " · " + esc(t("kb_key")) + " " + (ki + 1) + " / " + btns.length + "</span>" +
+            '<span class="kb-type t-' + esc(btype) + '">' + esc(typeLabel) + "</span></div>" +
+          '<div class="kb-title-row"><h3>' + esc(L(btn)) + "</h3>" + (kb.engrave ? '<span class="kb-engrave">' + esc(kb.engrave) + "</span>" : "") + "</div>" +
+        '</div><button type="button" class="kb-close" data-kb-close="1" aria-label="' + esc(t("close")) + '">×</button></div>' +
+        '<div class="kb-body">' + body + "</div>" +
+        '<div class="kb-ft">' +
+          '<div class="kb-nav">' +
+            '<button type="button" data-kb-step="-1"' + (ki === 0 ? " disabled" : "") + ">" + esc(t("kb_prev")) + "</button>" +
+            '<button type="button" data-kb-step="1"' + (ki === btns.length - 1 ? " disabled" : "") + ">" + esc(t("kb_next")) + "</button>" +
+          "</div>" +
+          '<button type="button" class="btn btn-sm" data-kb-doc="' + kbPage + '">' + esc(t("kb_open_doc").replace("{p}", kbPage)) + "</button>" +
+        "</div>" +
+      "</div>";
+    modal.hidden = false;
+  }
+
+  /* gắn Hand Tool (kéo di chuyển) + Ctrl + lăn chuột (phóng to/thu nhỏ) cho khung xem kịch bản trong Pop-up */
+  function bindKbDocGestures() {
+    var wrap = $("#kbModal .kb-doc-wrap");
+    var sheet = $("#kbModal .kb-doc-sheet");
+    var pctEl = $("#kbModal .kb-zpct");
+    if (!wrap || !sheet) return;
+
+    var dragging = false, sx = 0, sy = 0, sl = 0, st0 = 0;
+    wrap.addEventListener("pointerdown", function (e) {
+      if (e.button !== 0 && e.pointerType === "mouse") return;
+      e.preventDefault();
+      dragging = true;
+      sx = e.clientX; sy = e.clientY;
+      sl = wrap.scrollLeft; st0 = wrap.scrollTop;
+      wrap.classList.add("drag");
+      wrap.setPointerCapture(e.pointerId);
+    });
+    wrap.addEventListener("pointermove", function (e) {
+      if (!dragging) return;
+      wrap.scrollLeft = sl - (e.clientX - sx);
+      wrap.scrollTop = st0 - (e.clientY - sy);
+    });
+    function stopDrag(e) {
+      if (!dragging) return;
+      dragging = false;
+      wrap.classList.remove("drag");
+      try { wrap.releasePointerCapture(e.pointerId); } catch (err) {}
+    }
+    wrap.addEventListener("pointerup", stopDrag);
+    wrap.addEventListener("pointercancel", stopDrag);
+
+    wrap.addEventListener("wheel", function (e) {
+      if (!e.ctrlKey) return;
+      e.preventDefault();
+      var oldZ = (kbState && kbState.docZoom) || 100;
+      var step = e.deltaY < 0 ? 15 : -15;
+      var newZ = Math.max(60, Math.min(300, oldZ + step));
+      if (newZ === oldZ) return;
+
+      // Giữ tâm phóng to quanh vị trí con trỏ chuột
+      var r = wrap.getBoundingClientRect();
+      var mx = e.clientX - r.left, my = e.clientY - r.top;
+      var ratioX = (wrap.scrollLeft + mx) / Math.max(1, wrap.scrollWidth);
+      var ratioY = (wrap.scrollTop + my) / Math.max(1, wrap.scrollHeight);
+
+      if (kbState) kbState.docZoom = newZ;
+      sheet.style.width = newZ + "%";
+      if (pctEl) pctEl.textContent = newZ + "%";
+
+      wrap.scrollLeft = ratioX * wrap.scrollWidth - mx;
+      wrap.scrollTop = ratioY * wrap.scrollHeight - my;
+    }, { passive: false });
+  }
+
+  /* xem nhanh trang Kịch bản gốc ngay trong Pop-up (không rời tab Mặt bằng – ban-mau-10) */
+  function openKbDocInModal(pageNum, zoomPct) {
+    var pages = D.trang.kich_ban || [];
+    if (!pages.length) return;
+    var p = Math.max(1, Math.min(pageNum, pages.length));
+    var z = Math.max(60, Math.min(zoomPct || 100, 300));
+    if (kbState) { kbState.docPage = p; kbState.docZoom = z; }
+    var pg = pages[p - 1];
+    var lab = KB_LABEL[p - 1] ? L(KB_LABEL[p - 1]) : "";
+    var modal = $("#kbModal");
+    modal.innerHTML =
+      '<div class="kb-box kb-wide">' +
+        '<div class="kb-hd"><div>' +
+          '<div class="kb-eyebrow"><span class="kb-sw-tag">' + esc(t("kb_doc_title").replace("{p}", p).replace("{n}", pages.length)) + "</span>" +
+            (kbState ? '<span class="kb-type t-scene">' + esc(kbState.sw) + " · " + esc(t("kb_key")) + " " + (kbState.ki + 1) + "</span>" : "") + "</div>" +
+          '<div class="kb-title-row"><h3>' + esc(lab) + "</h3></div>" +
+        '</div><button type="button" class="kb-close" data-kb-close="1" aria-label="' + esc(t("close")) + '">×</button></div>' +
+        '<div class="kb-doc-wrap"><div class="kb-doc-sheet" style="width:' + z + '%"><img src="' + pg.img + '" alt=""></div></div>' +
+        '<div class="kb-ft">' +
+          '<button type="button" class="kb-back-btn" data-kb-back="1">' + esc(t("kb_back_sum")) + "</button>" +
+          '<div class="kb-doc-tools">' +
+            '<button type="button" data-kb-dz="-20" title="' + esc(t("zoom_out")) + '">−</button>' +
+            '<span class="kb-zpct">' + z + '%</span>' +
+            '<button type="button" data-kb-dz="20" title="' + esc(t("zoom_in")) + '">+</button>' +
+            '<button type="button" data-kb-dp="-1"' + (p <= 1 ? " disabled" : "") + ">‹ " + esc(t("prev")) + "</button>" +
+            '<button type="button" data-kb-dp="1"' + (p >= pages.length ? " disabled" : "") + ">" + esc(t("next")) + " ›</button>" +
+          "</div>" +
+        "</div>" +
+      "</div>";
+    modal.hidden = false;
+    bindKbDocGestures();
   }
 
   /* ===== tài liệu ===== */
@@ -585,6 +855,12 @@
     if ((b = e.target.closest("#pager button"))) { goPage(+b.dataset.go); return; }
     if (e.target.closest("#aPrev")) { goPage(cur() - 1); return; }
     if (e.target.closest("#aNext")) { goPage(cur() + 1); return; }
+    if (e.target.closest("#fsDots")) {
+      if (!fsDrawerOpen && Object.keys(st.kinds).length > 0) {
+        st.kinds = {}; applyFilter(); renderPanel(); return;
+      }
+      fsDrawerOpen = !fsDrawerOpen; updateFsDrawer(); return;
+    }
     if (e.target.closest("[data-clear-flt]")) {
       st.kinds = {}; applyFilter(); renderPanel(); return;
     }
@@ -592,6 +868,27 @@
       var k = b.dataset.k;
       if (st.kinds[k]) delete st.kinds[k]; else st.kinds[k] = 1;
       applyFilter(); renderPanel(); return;
+    }
+    if (e.target.closest("[data-kb-close]") || e.target.id === "kbModal") {
+      closeKeyModal(); return;
+    }
+    if ((b = e.target.closest("[data-kb-doc]"))) {
+      openKbDocInModal(+b.dataset.kbDoc, 100); return;
+    }
+    if (e.target.closest("[data-kb-back]") && kbState) {
+      openKeyModal(kbState.sw, kbState.ki); return;
+    }
+    if ((b = e.target.closest("[data-kb-dp]")) && kbState && kbState.docPage) {
+      openKbDocInModal(kbState.docPage + (+b.dataset.kbDp), kbState.docZoom || 100); return;
+    }
+    if ((b = e.target.closest("[data-kb-dz]")) && kbState && kbState.docPage) {
+      openKbDocInModal(kbState.docPage, (kbState.docZoom || 100) + (+b.dataset.kbDz)); return;
+    }
+    if ((b = e.target.closest("[data-kb-step]")) && kbState) {
+      openKeyModal(kbState.sw, kbState.ki + (+b.dataset.kbStep)); return;
+    }
+    if ((b = e.target.closest(".key-btn"))) {
+      openKeyModal(b.dataset.sw, +b.dataset.ki); return;
     }
     if (e.target.closest(".dt-close")) { closeDetail(); return; }
   });
@@ -601,11 +898,194 @@
     viewer.layer.querySelectorAll(".hov").forEach(function (x) { x.classList.remove("hov"); });
     if (h) mark(h.dataset.i, "hov", true);
   });
+  /* ===== phím tắt (đọc từ file .env khi chạy qua HTTP/HTTPS, dự phòng mặc định khi mở file:///) ===== */
+  var NAV_ORDER = ["trang-chu", "van-phong", "nha-o", "biet-thu", "khach-san", "tai-lieu"];
+  var KEYS = {
+    KEY_NAV_LEFT: "KeyA",
+    KEY_NAV_RIGHT: "KeyD",
+    KEY_MUC_UP: "KeyW",
+    KEY_MUC_DOWN: "KeyS",
+    KEY_FULLSCREEN: "Space",
+    KEY_EXIT_FULLSCREEN: "Escape",
+    KEY_TOGGLE_DEVICES: "Control",
+    KEY_CLEAR_FILTER: "Space",
+    KEY_PAGE_PREV: "ArrowLeft",
+    KEY_PAGE_NEXT: "ArrowRight"
+  };
+
+  function normKey(raw) {
+    var s = String(raw == null ? "" : raw).trim().replace(/^["']|["']$/g, "");
+    if (!s) return "";
+    if (/^[a-zA-Z]$/.test(s)) return "Key" + s.toUpperCase();
+    if (/^[0-9]$/.test(s)) return "Digit" + s;
+    var low = s.toLowerCase();
+    var map = {
+      space: "Space", spacebar: "Space",
+      esc: "Escape", escape: "Escape",
+      ctrl: "Control", control: "Control",
+      left: "ArrowLeft", arrowleft: "ArrowLeft",
+      right: "ArrowRight", arrowright: "ArrowRight",
+      up: "ArrowUp", arrowup: "ArrowUp",
+      down: "ArrowDown", arrowdown: "ArrowDown",
+      tab: "Tab", enter: "Enter", shift: "Shift", alt: "Alt"
+    };
+    return map[low] || s;
+  }
+
+  function keyToCode(k) {
+    if (!k || k.length !== 1) return "";
+    if (k === "ư" || k === "Ư") return "KeyW";
+    var base = k.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[đĐ]/g, "d");
+    if (/^[a-zA-Z]$/.test(base)) return "Key" + base.toUpperCase();
+    if (/^[0-9]$/.test(base)) return "Digit" + base;
+    return "";
+  }
+
+  function matchKey(e, target) {
+    if (!target) return false;
+    if (e.code === target || e.key === target) return true;
+    // Hỗ trợ Unikey/EVKey kiểu gõ Telex khi bấm liên tiếp (vd: dd -> đ, aa -> â, w -> ư làm e.code rỗng)
+    if (!e.code && e.key && keyToCode(e.key) === target) return true;
+    return false;
+  }
+
+  function parseEnvShortcuts(txt) {
+    txt.split(/\r?\n/).forEach(function (line) {
+      var l = line.trim();
+      if (!l || l.charAt(0) === "#") return;
+      var eq = l.indexOf("=");
+      if (eq < 0) return;
+      var k = l.slice(0, eq).trim();
+      var v = l.slice(eq + 1).replace(/\s+#.*$/, "").trim();
+      if (Object.prototype.hasOwnProperty.call(KEYS, k)) KEYS[k] = normKey(v);
+    });
+  }
+
+  if (location.protocol === "http:" || location.protocol === "https:") {
+    fetch(".env", { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.text() : ""; })
+      .then(function (txt) { if (txt) parseEnvShortcuts(txt); })
+      .catch(function () {});
+  }
+
+  function toggleDeviceList() {
+    if (kbState) return;
+    if (tabNow !== "work" || st.muc !== "mat-bang" || !CAT_BY[st.cat] || !CAT_BY[st.cat].data) return;
+    if (document.body.classList.contains("is-fs")) {
+      if (fsDrawerOpen) {
+        fsDrawerOpen = false;
+        updateFsDrawer();
+      } else {
+        if (st.sel >= 0) closeDetail();
+        fsDrawerOpen = true;
+        updateFsDrawer();
+      }
+    } else if (st.sel >= 0) {
+      closeDetail();
+    }
+  }
+
+  var ctrlSolo = false, lastSynthTs = 0;
+  function skipDoubleSynth(e) {
+    if (e.code) return false;
+    var now = Date.now();
+    if (now - lastSynthTs < 80) return true;
+    lastSynthTs = now;
+    return false;
+  }
+  document.addEventListener("pointerdown", function () { ctrlSolo = false; }, true);
+  document.addEventListener("wheel", function () { ctrlSolo = false; }, true);
+  window.addEventListener("blur", function () { ctrlSolo = false; });
+
   document.addEventListener("keydown", function (e) {
-    if (tabNow !== "work" || !CAT_BY[st.cat].data) return;
-    if (e.key === "Escape" && st.sel >= 0) closeDetail();
-    else if (e.key === "ArrowLeft") goPage(cur() - 1);
-    else if (e.key === "ArrowRight") goPage(cur() + 1);
+    if (e.key === "Control") {
+      ctrlSolo = !e.repeat && !e.altKey && !e.shiftKey && !e.metaKey;
+      return;
+    }
+    ctrlSolo = false;
+
+    if (kbState) {
+      if (matchKey(e, KEYS.KEY_EXIT_FULLSCREEN) || e.key === "Escape") { closeKeyModal(); return; }
+      if (kbState.docPage) {
+        if (matchKey(e, KEYS.KEY_PAGE_PREV)) { openKbDocInModal(kbState.docPage - 1, kbState.docZoom); return; }
+        if (matchKey(e, KEYS.KEY_PAGE_NEXT)) { openKbDocInModal(kbState.docPage + 1, kbState.docZoom); return; }
+        return;
+      }
+      if (matchKey(e, KEYS.KEY_PAGE_PREV)) { openKeyModal(kbState.sw, kbState.ki - 1); return; }
+      if (matchKey(e, KEYS.KEY_PAGE_NEXT)) { openKeyModal(kbState.sw, kbState.ki + 1); return; }
+      return;
+    }
+
+    if (e.target && e.target.closest && e.target.closest("input, textarea, select, [contenteditable]")) return;
+
+    var hasMod = e.ctrlKey || e.altKey || e.metaKey;
+    var hasWorkData = tabNow === "work" && CAT_BY[st.cat] && !!CAT_BY[st.cat].data;
+
+    // Chuyển tab ngang trên thanh menu (xoay vòng)
+    if (!hasMod && (matchKey(e, KEYS.KEY_NAV_LEFT) || matchKey(e, KEYS.KEY_NAV_RIGHT))) {
+      e.preventDefault();
+      if (skipDoubleSynth(e)) return;
+      var curNav = (tabNow === "work" && st.cat) ? st.cat : tabNow;
+      var ni = NAV_ORDER.indexOf(curNav);
+      if (ni < 0) ni = 0;
+      ni = (ni + (matchKey(e, KEYS.KEY_NAV_RIGHT) ? 1 : -1) + NAV_ORDER.length) % NAV_ORDER.length;
+      var nextNav = NAV_ORDER[ni];
+      if (document.body.classList.contains("is-fs") && (!CAT_BY[nextNav] || !CAT_BY[nextNav].data)) {
+        toggleFullscreen();
+      }
+      location.hash = "#" + nextNav;
+      return;
+    }
+
+    // Chuyển tab dọc cột trái (Mặt bằng / Sơ đồ nguyên lý / Kịch bản vận hành, xoay vòng)
+    if (!hasMod && hasWorkData && (matchKey(e, KEYS.KEY_MUC_UP) || matchKey(e, KEYS.KEY_MUC_DOWN))) {
+      e.preventDefault();
+      if (skipDoubleSynth(e)) return;
+      var mi = MUC.findIndex(function (m) { return m.id === st.muc; });
+      if (mi < 0) mi = 0;
+      mi = (mi + (matchKey(e, KEYS.KEY_MUC_DOWN) ? 1 : -1) + MUC.length) % MUC.length;
+      var nextMuc = MUC[mi].id;
+      var savedPage = (st.page[st.cat + "/" + nextMuc] || 0) + 1;
+      location.hash = "#" + st.cat + "/" + nextMuc + "/" + savedPage;
+      return;
+    }
+
+    // Mở/đóng danh sách thiết bị nếu phím cấu hình trong .env không phải Control
+    if (!hasMod && hasWorkData && KEYS.KEY_TOGGLE_DEVICES !== "Control" && matchKey(e, KEYS.KEY_TOGGLE_DEVICES)) {
+      e.preventDefault();
+      toggleDeviceList();
+      return;
+    }
+
+    // Bỏ bộ lọc (ưu tiên khi đang lọc ở Mặt bằng) & bật/tắt Full Screen
+    if (!hasMod && hasWorkData) {
+      var isClear = matchKey(e, KEYS.KEY_CLEAR_FILTER);
+      var isFs = matchKey(e, KEYS.KEY_FULLSCREEN);
+      if (isClear && st.muc === "mat-bang" && Object.keys(st.kinds).length > 0) {
+        e.preventDefault();
+        st.kinds = {}; applyFilter(); renderPanel();
+        return;
+      }
+      if (isFs) {
+        e.preventDefault();
+        toggleFullscreen();
+        return;
+      }
+    }
+
+    if (!hasWorkData) return;
+    if (matchKey(e, KEYS.KEY_EXIT_FULLSCREEN) && document.body.classList.contains("is-fs")) { toggleFullscreen(); return; }
+    if ((matchKey(e, KEYS.KEY_EXIT_FULLSCREEN) || e.key === "Escape") && st.sel >= 0) closeDetail();
+    else if (matchKey(e, KEYS.KEY_PAGE_PREV)) goPage(cur() - 1);
+    else if (matchKey(e, KEYS.KEY_PAGE_NEXT)) goPage(cur() + 1);
+  });
+
+  // Bấm nhả Ctrl (độc lập, không kèm phím khác hay lăn chuột): ở tab Mặt bằng -> mở/đóng danh sách thiết bị
+  document.addEventListener("keyup", function (e) {
+    if (e.key !== "Control" || !ctrlSolo) return;
+    ctrlSolo = false;
+    if (KEYS.KEY_TOGGLE_DEVICES !== "Control") return;
+    toggleDeviceList();
   });
   window.addEventListener("hashchange", route);
   var rt;
