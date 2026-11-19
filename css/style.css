@@ -2258,3 +2258,20 @@ main {
     display: none;
   }
 }
+
+.hero-sku {
+  position: absolute;
+  z-index: 3;
+  right: 16px;
+  bottom: 16px;
+  font-family: Consolas, "Cascadia Mono", monospace;
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: .8px;
+  color: rgba(201, 211, 224, .68);
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: rgba(13, 20, 32, .45);
+  backdrop-filter: blur(4px);
+  pointer-events: none;
+}
