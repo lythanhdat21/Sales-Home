@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Control Solution Systems – Liên Dương</title>
+  <meta name="description" content="Giải pháp điều khiển thông minh KNX cho nhà ở, văn phòng, biệt thự, khách sạn: mặt bằng thiết bị, sơ đồ nguyên lý, kịch bản vận hành.">
+  <meta name="theme-color" content="#0d1420">
+  <link rel="icon" type="image/svg+xml" href="assets/logo/logo-lien-duong-mark.svg">
+  <link rel="apple-touch-icon" href="assets/logo/logo-lien-duong-mark.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Lexend:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="hd">
+    <a href="#trang-chu" class="logo" aria-label="LIENDUONG – Your Serenity">
+      <img class="logo-svg" src="assets/logo/logo-lien-duong-mark.svg" alt="">
+      <span class="logo-word">
+        <b>LIENDUONG</b>
+        <small><i></i>YOUR SERENITY</small>
+      </span>
+    </a>
+    <nav class="nav" id="nav"></nav>
+    <div class="lang" role="group" aria-label="Ngôn ngữ / Language">
+      <button type="button" data-lang="vi">VI</button>
+      <button type="button" data-lang="en">EN</button>
+    </div>
+    <button type="button" class="menu-btn" id="menuBtn" aria-label="Menu">
+      <svg viewBox="0 0 24 24" width="26" height="26"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </header>
+
+  <main>
+    <!-- TRANG CHỦ (gói gọn 1 màn hình, không scroll trên desktop) -->
+    <section class="tab home" id="trang-chu">
+      <div class="hero">
+        <div class="hero-text">
+          <h1 data-i18n="home_title"></h1>
+          <p class="lead" data-i18n="home_lead"></p>
+          <ul class="points" id="homePoints"></ul>
+          <div class="btn-row">
+            <a href="#van-phong/mat-bang/1" class="btn" data-i18n="home_view"></a>
+            <a href="#tai-lieu" class="btn btn-ghost" data-i18n="home_docs"></a>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="hero-frame">
+            <img id="heroImg" src="assets/hero-control.jpg" alt="Control Solution Systems">
+            <div class="hero-badges">
+              <span>KNX</span><span>DALI-2</span><span>AI</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="cats" id="homeCats"></div>
+      <footer class="ft"><img src="assets/logo/logo-lien-duong-mark.svg" alt=""><span>© LIENDUONG · Your Serenity · Control Solution Systems</span></footer>
+    </section>
+
+    <!-- KHUNG XEM: nhà ở / văn phòng / biệt thự / khách sạn -->
+    <section class="tab work" id="work">
+      <aside class="side">
+        <nav class="muc" id="mucList"></nav>
+        <div class="proj" id="projCard"></div>
+      </aside>
+      <div class="center">
+        <div class="viewer" id="viewer">
+          <div class="v-title" id="vTitle"></div>
+          <button type="button" class="arrow prev" id="aPrev"><svg viewBox="0 0 24 24"><path d="M15 4 7 12l8 8"/></svg></button>
+          <button type="button" class="arrow next" id="aNext"><svg viewBox="0 0 24 24"><path d="m9 4 8 8-8 8"/></svg></button>
+        </div>
+        <div class="mob-filter" id="mobFilter" hidden></div>
+        <div class="pager" id="pager"></div>
+        <div class="empty" id="empty" hidden></div>
+      </div>
+      <aside class="detail" id="detail"></aside>
+    </section>
+
+    <!-- TÀI LIỆU -->
+    <section class="tab docs" id="tai-lieu">
+      <div class="docs-in">
+        <p class="eyebrow" data-i18n="dl_eyebrow"></p>
+        <h2 class="docs-h" data-i18n="dl_title"></h2>
+        <p class="desc" data-i18n="dl_desc"></p>
+        <div id="dlGroups"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

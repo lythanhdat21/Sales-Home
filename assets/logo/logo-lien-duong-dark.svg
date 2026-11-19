@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 96" fill="none">
+  <defs>
+    <linearGradient id="ld-d1" x1="14" y1="18" x2="96" y2="116" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="52%" stop-color="#0ea5e9"/>
+      <stop offset="100%" stop-color="#2fe0c0"/>
+    </linearGradient>
+    <linearGradient id="ld-d2" x1="32" y1="10" x2="92" y2="96" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2fe0c0"/>
+      <stop offset="55%" stop-color="#22d3ee"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+    <linearGradient id="ld-d3" x1="48" y1="24" x2="114" y2="62" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#7dd3fc"/>
+      <stop offset="50%" stop-color="#2fe0c0"/>
+      <stop offset="100%" stop-color="#38bdf8"/>
+    </linearGradient>
+    <linearGradient id="ld-txt-d" x1="100" y1="28" x2="365" y2="62" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="72%" stop-color="#eaf6ff"/>
+      <stop offset="100%" stop-color="#a8f5e8"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Biểu tượng 3 cánh sóng Liên Dương -->
+  <g transform="translate(2, 2) scale(0.72)">
+    <path d="M40.5 20.5 C16.5 39.5 11.5 76.5 31.5 100.5 C48.5 120.8 79.5 122.5 103.5 107.5 C80.5 113.5 54.5 107.5 41.0 89.5 C26.5 70.2 27.5 41.5 40.5 20.5 Z" fill="url(#ld-d1)"/>
+    <path d="M77.5 8.5 C46.5 12.0 27.5 38.5 33.5 67.5 C38.0 89.0 56.5 101.5 78.5 100.5 C60.5 94.5 48.0 80.5 46.0 62.5 C43.5 40.5 56.5 20.5 77.5 8.5 Z" fill="url(#ld-d2)"/>
+    <path d="M55.5 51.5 C58.5 32.5 76.5 20.5 95.5 24.5 C108.5 27.2 117.5 38.5 118.0 52.5 C112.5 41.5 102.5 34.5 89.5 33.5 C74.5 32.3 62.5 40.0 55.5 51.5 Z" fill="url(#ld-d3)"/>
+  </g>
+
+  <!-- Chữ thương hiệu LIENDUONG + khẩu hiệu Your Serenity -->
+  <text x="102" y="54" fill="url(#ld-txt-d)" font-family="'Lexend', 'Segoe UI', Arial, sans-serif" font-size="34" font-weight="700" letter-spacing="3.2">LIENDUONG</text>
+  <line x1="104" y1="64" x2="152" y2="64" stroke="#2fe0c0" stroke-width="2" stroke-linecap="round"/>
+  <text x="160" y="69" fill="#7dd3fc" font-family="'Be Vietnam Pro', 'Segoe UI', Arial, sans-serif" font-size="13.5" font-weight="500" letter-spacing="4.2">YOUR SERENITY</text>
+</svg>
