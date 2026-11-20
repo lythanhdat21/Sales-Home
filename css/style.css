@@ -2056,15 +2056,16 @@ main {
     right: 6px;
   }
 
-  /* thanh lọc thiết bị ngang trượt mượt trên iPad dọc & điện thoại */
+  /* thanh lọc thiết bị ngang trượt mượt trên iPad dọc & điện thoại (đẩy lên trên cùng khung bản vẽ, không bị #pager đè – ban-mau-14) */
   .mob-filter {
+    order: -1;
     flex: none;
     display: flex;
     align-items: center;
     gap: 7px;
     padding: 8px 12px;
     background: var(--bg2);
-    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
@@ -2706,7 +2707,8 @@ body.is-fs {
 }
 body.is-fs .hd,
 body.is-fs .side,
-body.is-fs .detail {
+body.is-fs .detail,
+body.is-fs .mob-filter {
   display: none !important;
 }
 body.is-fs main {
